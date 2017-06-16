@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+// The Movie DB API key & token
+def TMDB_API_KEY = '"' + TheMovieDbApiKey + '"' ?: '"Please define The Movie Db API Key"'
+def TMDB_API_READ_ACCESS_TOKEN = '"' + TheMovieDbApiReadAccessToken + '"' ?: '"Please define The Movie Db API Read Access Token"'
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
@@ -10,6 +14,14 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        each { type ->
+            buildConfigField 'String', 'TMDB_API_KEY', TMDB_API_KEY
+            buildConfigField 'String', 'TMDB_API_READ_ACCESS_TOKEN', TMDB_API_READ_ACCESS_TOKEN
+        }
+        manifestPlaceholders = [
+            TMDB_API_KEY: TMDB_API_KEY,
+            TMDB_API_READ_ACCESS_TOKEN: TMDB_API_READ_ACCESS_TOKEN
+        ]
     }
     buildTypes {
         release {
