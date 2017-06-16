@@ -9,17 +9,20 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rudilee on 6/16/17.
  */
 
 public class MovieThumbnailAdapter extends RecyclerView.Adapter<MovieThumbnailAdapter.MovieThumbnailViewHolder> {
-    private ArrayList<MovieDetail> movieDetails = new ArrayList<>();
+    private final String TMDB_POSTER_BASE_URL = "https://image.tmdb.org/t/p/";
+    private final String TMDB_POSTER_SIZE = "w342";
 
-    public void setMovieDetails(ArrayList<MovieDetail> movieDetails) {
-        this.movieDetails = movieDetails;
+    private List<MovieDetail> mMovieDetails = null;
+
+    public void setMovieDetails(List<MovieDetail> movieDetails) {
+        mMovieDetails = movieDetails;
 
         notifyDataSetChanged();
     }
@@ -36,17 +39,17 @@ public class MovieThumbnailAdapter extends RecyclerView.Adapter<MovieThumbnailAd
 
     @Override
     public void onBindViewHolder(MovieThumbnailViewHolder holder, int position) {
-        MovieDetail movieDetail = movieDetails.get(position);
+        MovieDetail movieDetail = mMovieDetails.get(position);
 
         Picasso.with(holder.thumbnailImageView.getContext())
-                .load(movieDetail.getPosterUrl())
+                .load(TMDB_POSTER_BASE_URL + TMDB_POSTER_SIZE + movieDetail.poster_path)
                 .placeholder(R.mipmap.placeholder)
                 .into(holder.thumbnailImageView);
     }
 
     @Override
     public int getItemCount() {
-        return movieDetails.size();
+        return mMovieDetails == null ? 0 : mMovieDetails.size();
     }
 
     class MovieThumbnailViewHolder extends RecyclerView.ViewHolder {
