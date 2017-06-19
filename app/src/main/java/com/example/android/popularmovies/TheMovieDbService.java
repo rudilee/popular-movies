@@ -10,5 +10,5 @@ import retrofit2.http.Query;
 
 public interface TheMovieDbService {
     @GET("discover/movie")
-    Call<DiscoverMovieResponse> discoverMovie(@Query("api_key") String apiKey);
+    Call<DiscoverMovieResponse> discoverMovie(@Query("api_key") String apiKey, @Query("sort_by") String sortBy);
 }

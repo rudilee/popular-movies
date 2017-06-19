@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.FrameLayout;
@@ -17,6 +19,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
+    private final String POPULARITY_ASC = "popularity.asc";
+    private final String POPULARITY_DESC = "popularity.desc";
+    private final String AVERAGE_VOTE_ASC = "vote_average.asc";
+    private final String AVERAGE_VOTE_DESC = "vote_average.desc";
+
     private List<MovieDetail> mMovieDetails = null;
     private MovieThumbnailAdapter mMovieThumbnailAdapter = new MovieThumbnailAdapter();
     private FrameLayout mLoadingHolder;
@@ -33,11 +40,40 @@ public class MainActivity extends AppCompatActivity {
 
         mLoadingHolder = (FrameLayout) findViewById(R.id.loading_holder);
 
-        loadMovieList();
+        loadMovieList(POPULARITY_DESC);
     }
 
-    private void loadMovieList() {
-        new LoadMovieListTask().execute();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        String sortBy = "";
+
+        switch (item.getItemId()) {
+            case R.id.sort_popularity_asc: sortBy = POPULARITY_ASC;
+                break;
+            case R.id.sort_popularity_desc: sortBy = POPULARITY_DESC;
+                break;
+            case R.id.sort_average_vote_asc: sortBy = AVERAGE_VOTE_ASC;
+                break;
+            case R.id.sort_average_vote_desc: sortBy = AVERAGE_VOTE_DESC;
+                break;
+        }
+
+        if (!sortBy.isEmpty()) {
+            loadMovieList(sortBy);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void loadMovieList(String sortBy) {
+        new LoadMovieListTask().execute(sortBy);
     }
 
     private void toggleLoading(boolean loading) {
@@ -69,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     .build();
 
             TheMovieDbService service = retrofit.create(TheMovieDbService.class);
-            Call<DiscoverMovieResponse> caller = service.discoverMovie(BuildConfig.TMDB_API_KEY);
+            Call<DiscoverMovieResponse> caller = service.discoverMovie(BuildConfig.TMDB_API_KEY, params[0]);
             List<MovieDetail> movieDetails = null;
 
             try {
