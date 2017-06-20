@@ -16,10 +16,12 @@ import java.util.List;
  */
 
 public class MovieThumbnailAdapter extends RecyclerView.Adapter<MovieThumbnailAdapter.MovieThumbnailViewHolder> {
-    private final String TMDB_POSTER_BASE_URL = "https://image.tmdb.org/t/p/";
-    private final String TMDB_POSTER_SIZE = "w342";
-
     private List<MovieDetail> mMovieDetails = null;
+    private final MovieThumbnailClickHandler mClickHandler;
+
+    public MovieThumbnailAdapter(MovieThumbnailClickHandler mClickHandler) {
+        this.mClickHandler = mClickHandler;
+    }
 
     public void setMovieDetails(List<MovieDetail> movieDetails) {
         mMovieDetails = movieDetails;
@@ -42,7 +44,7 @@ public class MovieThumbnailAdapter extends RecyclerView.Adapter<MovieThumbnailAd
         MovieDetail movieDetail = mMovieDetails.get(position);
 
         Picasso.with(holder.thumbnailImageView.getContext())
-                .load(TMDB_POSTER_BASE_URL + TMDB_POSTER_SIZE + movieDetail.poster_path)
+                .load(TheMovieDb.TMDB_POSTER_BASE_URL + TheMovieDb.TMDB_POSTER_SIZE + movieDetail.poster_path)
                 .placeholder(R.mipmap.placeholder)
                 .into(holder.thumbnailImageView);
     }
@@ -52,13 +54,25 @@ public class MovieThumbnailAdapter extends RecyclerView.Adapter<MovieThumbnailAd
         return mMovieDetails == null ? 0 : mMovieDetails.size();
     }
 
-    class MovieThumbnailViewHolder extends RecyclerView.ViewHolder {
+    public interface MovieThumbnailClickHandler {
+        void onClick(MovieDetail movieDetail);
+    }
+
+    class MovieThumbnailViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView thumbnailImageView;
 
         public MovieThumbnailViewHolder(View itemView) {
             super(itemView);
 
+            itemView.setOnClickListener(this);
+
             thumbnailImageView = (ImageView) itemView.findViewById(R.id.iv_movie_thumbnail);
+        }
+
+        @Override
+        public void onClick(View view) {
+            MovieDetail movieDetail = mMovieDetails.get(getAdapterPosition());
+            mClickHandler.onClick(movieDetail);
         }
     }
 }

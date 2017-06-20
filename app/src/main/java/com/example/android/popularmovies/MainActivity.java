@@ -1,5 +1,6 @@
 package com.example.android.popularmovies;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,20 +19,13 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
-    private final String POPULARITY_ASC = "popularity.asc";
-    private final String POPULARITY_DESC = "popularity.desc";
-    private final String AVERAGE_VOTE_ASC = "vote_average.asc";
-    private final String AVERAGE_VOTE_DESC = "vote_average.desc";
-
-    private List<MovieDetail> mMovieDetails = null;
-    private MovieThumbnailAdapter mMovieThumbnailAdapter = new MovieThumbnailAdapter();
+public class MainActivity extends AppCompatActivity implements MovieThumbnailAdapter.MovieThumbnailClickHandler {
+    private MovieThumbnailAdapter mMovieThumbnailAdapter = new MovieThumbnailAdapter(this);
     private FrameLayout mLoadingHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
         RecyclerView movieThumbnailsRecyclerView = (RecyclerView) findViewById(R.id.rv_movie_thumbnails);
@@ -40,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         mLoadingHolder = (FrameLayout) findViewById(R.id.loading_holder);
 
-        loadMovieList(POPULARITY_DESC);
+        loadMovieList(TheMovieDb.POPULARITY_DESC);
     }
 
     @Override
@@ -55,13 +49,13 @@ public class MainActivity extends AppCompatActivity {
         String sortBy = "";
 
         switch (item.getItemId()) {
-            case R.id.sort_popularity_asc: sortBy = POPULARITY_ASC;
+            case R.id.sort_popularity_asc: sortBy = TheMovieDb.POPULARITY_ASC;
                 break;
-            case R.id.sort_popularity_desc: sortBy = POPULARITY_DESC;
+            case R.id.sort_popularity_desc: sortBy = TheMovieDb.POPULARITY_DESC;
                 break;
-            case R.id.sort_average_vote_asc: sortBy = AVERAGE_VOTE_ASC;
+            case R.id.sort_average_vote_asc: sortBy = TheMovieDb.AVERAGE_VOTE_ASC;
                 break;
-            case R.id.sort_average_vote_desc: sortBy = AVERAGE_VOTE_DESC;
+            case R.id.sort_average_vote_desc: sortBy = TheMovieDb.AVERAGE_VOTE_DESC;
                 break;
         }
 
@@ -70,6 +64,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(MovieDetail movieDetail) {
+        Intent intentToDisplayMovieActivity = new Intent(this, MovieActivity.class);
+        intentToDisplayMovieActivity.putExtra("movie-detail", movieDetail);
+
+        startActivity(intentToDisplayMovieActivity);
     }
 
     private void loadMovieList(String sortBy) {
@@ -125,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(movieDetails);
 
             if (movieDetails != null) {
-                mMovieDetails = movieDetails;
                 mMovieThumbnailAdapter.setMovieDetails(movieDetails);
             }
 
