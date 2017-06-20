@@ -3,6 +3,7 @@ package com.example.android.popularmovies;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.view.animation.AlphaAnimation;
 import android.widget.FrameLayout;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import retrofit2.Call;
@@ -20,8 +22,14 @@ import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements MovieThumbnailAdapter.MovieThumbnailClickHandler {
+    private final String MOVIE_LIST_STATE_KEY = "movie-thumbnail-list";
+    private final String MOVIE_DETAILS = "movie-details";
+
     private MovieThumbnailAdapter mMovieThumbnailAdapter = new MovieThumbnailAdapter(this);
     private FrameLayout mLoadingHolder;
+    private GridLayoutManager mMovieListLayoutManager = new GridLayoutManager(this, 2);
+    private Parcelable mMovieListState = null;
+    private List<MovieDetail> mMovieDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +37,14 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
         setContentView(R.layout.activity_main);
 
         RecyclerView movieThumbnailsRecyclerView = (RecyclerView) findViewById(R.id.rv_movie_thumbnails);
-        movieThumbnailsRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        movieThumbnailsRecyclerView.setLayoutManager(mMovieListLayoutManager);
         movieThumbnailsRecyclerView.setAdapter(mMovieThumbnailAdapter);
 
         mLoadingHolder = (FrameLayout) findViewById(R.id.loading_holder);
 
-        loadMovieList(TheMovieDb.POPULARITY_DESC);
+        if (savedInstanceState == null) {
+            loadMovieList(TheMovieDb.POPULARITY_DESC);
+        }
     }
 
     @Override
@@ -64,6 +74,32 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(MOVIE_LIST_STATE_KEY, mMovieListLayoutManager.onSaveInstanceState());
+        outState.putSerializable(MOVIE_DETAILS, (Serializable) mMovieDetails);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        mMovieListState = savedInstanceState.getParcelable(MOVIE_LIST_STATE_KEY);
+        mMovieDetails = (List<MovieDetail>) savedInstanceState.getSerializable(MOVIE_DETAILS);
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mMovieListState != null) {
+            mMovieThumbnailAdapter.setMovieDetails(mMovieDetails);
+            mMovieListLayoutManager.onRestoreInstanceState(mMovieListState);
+        }
     }
 
     @Override
@@ -108,18 +144,17 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
 
             TheMovieDbService service = retrofit.create(TheMovieDbService.class);
             Call<DiscoverMovieResponse> caller = service.discoverMovie(BuildConfig.TMDB_API_KEY, params[0]);
-            List<MovieDetail> movieDetails = null;
 
             try {
                 DiscoverMovieResponse movieResponse = caller.execute().body();
                 if (movieResponse != null) {
-                    movieDetails = movieResponse.results;
+                    mMovieDetails = movieResponse.results;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            return movieDetails;
+            return mMovieDetails;
         }
 
         @Override
