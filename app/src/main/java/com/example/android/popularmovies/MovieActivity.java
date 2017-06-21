@@ -10,7 +10,6 @@ import com.squareup.picasso.Picasso;
 
 import org.joda.time.format.DateTimeFormat;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 
 public class MovieActivity extends AppCompatActivity {
@@ -28,7 +27,7 @@ public class MovieActivity extends AppCompatActivity {
         Intent intentFromMainActivity = getIntent();
         if (intentFromMainActivity != null) {
             if (intentFromMainActivity.hasExtra("movie-detail")) {
-                MovieDetail movieDetail = (MovieDetail) intentFromMainActivity.getSerializableExtra("movie-detail");
+                MovieDetail movieDetail = intentFromMainActivity.getParcelableExtra("movie-detail");
 
                 String year = String.valueOf(DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(movieDetail.release_date).getYear());
                 String averageRate = new DecimalFormat("###.#").format(movieDetail.vote_average) + "/10";

@@ -14,7 +14,7 @@ import android.view.animation.AlphaAnimation;
 import android.widget.FrameLayout;
 
 import java.io.IOException;
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -23,7 +23,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements MovieThumbnailAdapter.MovieThumbnailClickHandler {
     private final String MOVIE_LIST_STATE_KEY = "movie-thumbnail-list";
-    private final String MOVIE_DETAILS = "movie-details";
+    private final String MOVIE_DETAILS_KEY = "movie-details";
 
     private MovieThumbnailAdapter mMovieThumbnailAdapter = new MovieThumbnailAdapter(this);
     private FrameLayout mLoadingHolder;
@@ -81,13 +81,13 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
         super.onSaveInstanceState(outState);
 
         outState.putParcelable(MOVIE_LIST_STATE_KEY, mMovieListLayoutManager.onSaveInstanceState());
-        outState.putSerializable(MOVIE_DETAILS, (Serializable) mMovieDetails);
+        outState.putParcelableArrayList(MOVIE_DETAILS_KEY, (ArrayList<? extends Parcelable>) mMovieDetails);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         mMovieListState = savedInstanceState.getParcelable(MOVIE_LIST_STATE_KEY);
-        mMovieDetails = (List<MovieDetail>) savedInstanceState.getSerializable(MOVIE_DETAILS);
+        mMovieDetails = savedInstanceState.getParcelableArrayList(MOVIE_DETAILS_KEY);
 
         super.onRestoreInstanceState(savedInstanceState);
     }
