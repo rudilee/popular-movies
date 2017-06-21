@@ -59,7 +59,7 @@ public class MovieThumbnailAdapter extends RecyclerView.Adapter<MovieThumbnailAd
     }
 
     class MovieThumbnailViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView thumbnailImageView;
+        final ImageView thumbnailImageView;
 
         public MovieThumbnailViewHolder(View itemView) {
             super(itemView);

@@ -25,9 +25,9 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
     private final String MOVIE_LIST_STATE_KEY = "movie-thumbnail-list";
     private final String MOVIE_DETAILS_KEY = "movie-details";
 
-    private MovieThumbnailAdapter mMovieThumbnailAdapter = new MovieThumbnailAdapter(this);
+    private final MovieThumbnailAdapter mMovieThumbnailAdapter = new MovieThumbnailAdapter(this);
     private FrameLayout mLoadingHolder;
-    private GridLayoutManager mMovieListLayoutManager = new GridLayoutManager(this, 2);
+    private final GridLayoutManager mMovieListLayoutManager = new GridLayoutManager(this, 2);
     private Parcelable mMovieListState = null;
     private List<MovieDetail> mMovieDetails;
 
@@ -126,8 +126,6 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
     }
 
     private class LoadMovieListTask extends AsyncTask<String, Void, List<MovieDetail> > {
-        final static String TMDB_BASE_URL = "https://api.themoviedb.org/3/";
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -138,12 +136,12 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
         @Override
         protected List<MovieDetail> doInBackground(String... params) {
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(TMDB_BASE_URL)
+                    .baseUrl(TheMovieDb.TMDB_BASE_URL)
                     .addConverterFactory(MoshiConverterFactory.create())
                     .build();
 
             TheMovieDbService service = retrofit.create(TheMovieDbService.class);
-            Call<DiscoverMovieResponse> caller = service.discoverMovie(BuildConfig.TMDB_API_KEY, params[0]);
+            Call<DiscoverMovieResponse> caller = service.discoverMovie(params[0]);
 
             try {
                 DiscoverMovieResponse movieResponse = caller.execute().body();
