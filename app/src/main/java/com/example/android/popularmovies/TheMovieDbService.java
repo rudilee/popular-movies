@@ -10,5 +10,11 @@ import retrofit2.http.Query;
 
 interface TheMovieDbService {
     @GET("discover/movie?api_key=" + BuildConfig.TMDB_API_KEY)
-    Call<DiscoverMovieResponse> discoverMovie(@Query("sort_by") String sortBy);
+    Call<MovieListResponse> discoverMovie(@Query("sort_by") String sortBy);
+
+    @GET("movie/popular?api_key=" + BuildConfig.TMDB_API_KEY)
+    Call<MovieListResponse> popularMovie();
+
+    @GET("movie/top_rated?api_key=" + BuildConfig.TMDB_API_KEY)
+    Call<MovieListResponse> topRatedMovie();
 }

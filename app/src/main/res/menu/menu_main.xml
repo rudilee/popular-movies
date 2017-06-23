@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/sort_popularity_desc"
         android:checkable="false"
-        android:title="@string/popularity_desc" />
+        android:title="@string/popularity_desc"
+        android:visible="false" />
     <item
         android:id="@+id/sort_popularity_asc"
         android:checkable="false"
-        android:title="@string/popularity_asc" />
+        android:title="@string/popularity_asc"
+        android:visible="false" />
     <item
         android:id="@+id/sort_average_vote_desc"
-        android:title="@string/average_vote_desc" />
+        android:title="@string/average_vote_desc"
+        android:visible="false" />
     <item
         android:id="@+id/sort_average_vote_asc"
-        android:title="@string/average_vote_asc" />
+        android:title="@string/average_vote_asc"
+        android:visible="false" />
+    <item
+        android:id="@+id/popular_movie"
+        android:title="Popular Movie" />
+    <item
+        android:id="@+id/top_rated_movie"
+        android:title="Top Rated Movie" />
 </menu>
