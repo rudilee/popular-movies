@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -132,6 +133,8 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
     }
 
     private class LoadMovieListTask extends AsyncTask<String, Void, List<MovieDetail> > {
+        private boolean mRetrieveSuccess = false;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -165,6 +168,8 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
                         mMovieDetails = movieListResponse.results;
                     }
                 }
+
+                mRetrieveSuccess = true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -178,6 +183,8 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
 
             if (movieDetails != null) {
                 mMovieThumbnailAdapter.setMovieDetails(movieDetails);
+            } else if (!mRetrieveSuccess) {
+                Toast.makeText(MainActivity.this, "Encounter problem with your Internet connection", Toast.LENGTH_LONG).show();
             }
 
             toggleLoading(false);
