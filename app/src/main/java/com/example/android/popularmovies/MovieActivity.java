@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,14 +16,6 @@ import org.joda.time.format.DateTimeFormat;
 import java.text.DecimalFormat;
 
 public class MovieActivity extends AppCompatActivity {
-    /*
-    * https://stackoverflow.com/a/17410076
-    * */
-    public int dpToPixel(int dp) {
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +47,7 @@ public class MovieActivity extends AppCompatActivity {
 
                 Picasso.with(this)
                         .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_BACKDROP_SIZE + movieDetail.backdrop_path)
-                        .resize(screenSize.x, dpToPixel(R.dimen.backdrop_height))
+                        .resize(screenSize.x, getResources().getDimensionPixelSize(R.dimen.backdrop_height))
                         .centerCrop()
                         .into(backdropImageView);
 
