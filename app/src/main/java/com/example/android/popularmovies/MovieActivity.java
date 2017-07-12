@@ -56,7 +56,7 @@ public class MovieActivity extends AppCompatActivity {
 
                 Picasso.with(this)
                         .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_BACKDROP_SIZE + movieDetail.backdrop_path)
-                        .resize(screenSize.x, dpToPixel(256))
+                        .resize(screenSize.x, dpToPixel(R.dimen.backdrop_height))
                         .centerCrop()
                         .into(backdropImageView);
 

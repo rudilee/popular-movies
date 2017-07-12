@@ -6,4 +6,7 @@
     <string name="average_vote_desc">Average Vote: High to Low</string>
     <string name="average_vote_asc">Average Vote: Low to High</string>
     <string name="backdrop_description">Movie backdrop image</string>
+    <string name="dummy_overview">Bacon ipsum dolor amet rump jerky strip steak, shankle tongue pork belly pork loin alcatra tail biltong frankfurter ham tenderloin turducken prosciutto.</string>
+    <string name="dummy_rate">8.9/10</string>
+    <string name="dummy_release">2017</string>
 </resources>

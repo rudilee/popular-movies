@@ -19,14 +19,14 @@
             android:layout_height="match_parent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleMarginStart="20dp"
-            app:expandedTitleMarginEnd="20dp"
+            app:expandedTitleMarginStart="@dimen/outer_padding"
+            app:expandedTitleMarginEnd="@dimen/outer_padding"
             android:fitsSystemWindows="true">
 
             <ImageView
                 android:id="@+id/iv_backdrop"
                 android:layout_width="match_parent"
-                android:layout_height="256dp"
+                android:layout_height="@dimen/backdrop_height"
                 android:contentDescription="@string/backdrop_description" />
 
             <android.support.v7.widget.Toolbar
@@ -55,9 +55,9 @@
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:paddingTop="10dp"
-                android:paddingStart="30dp"
-                android:paddingEnd="30dp"
+                android:paddingTop="@dimen/top_padding"
+                android:paddingStart="@dimen/inner_padding"
+                android:paddingEnd="@dimen/inner_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -69,37 +69,37 @@
                     tools:src="@mipmap/placeholder"/>
 
                 <LinearLayout
-                    android:paddingStart="40dp"
-                    android:paddingEnd="40dp"
+                    android:paddingStart="@dimen/second_inner_padding"
+                    android:paddingEnd="@dimen/second_inner_padding"
                     android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/tv_release_date"
-                        android:textSize="26sp"
+                        android:textSize="@dimen/medium_text"
                         android:textColor="@color/darkgray"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="2017"/>
+                        tools:text="@string/dummy_release"/>
 
                     <TextView
                         android:id="@+id/tv_average_rate"
                         android:textColor="@color/black"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="8.9/10"/>
+                        tools:text="@string/dummy_rate"/>
                 </LinearLayout>
             </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_overview"
                 android:textColor="@color/darkergray"
-                android:textSize="18sp"
-                android:padding="20sp"
+                android:textSize="@dimen/small_text"
+                android:padding="@dimen/outer_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Bacon ipsum dolor amet rump jerky strip steak, shankle tongue pork belly pork loin alcatra tail biltong frankfurter ham tenderloin turducken prosciutto."/>
+                tools:text="@string/dummy_overview"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>
