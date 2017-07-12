@@ -9,8 +9,4 @@ class TheMovieDb {
     public static final String TMDB_POSTER_SIZE = "w342";
     public static final String TMDB_BACKDROP_SIZE = "w780";
     public final static String TMDB_BASE_URL = "https://api.themoviedb.org/3/";
-    public static final String POPULARITY_ASC = "popularity.asc";
-    public static final String POPULARITY_DESC = "popularity.desc";
-    public static final String AVERAGE_VOTE_ASC = "vote_average.asc";
-    public static final String AVERAGE_VOTE_DESC = "vote_average.desc";
 }

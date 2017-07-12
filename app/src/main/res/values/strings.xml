@@ -9,4 +9,6 @@
     <string name="dummy_overview">Bacon ipsum dolor amet rump jerky strip steak, shankle tongue pork belly pork loin alcatra tail biltong frankfurter ham tenderloin turducken prosciutto.</string>
     <string name="dummy_rate">8.9/10</string>
     <string name="dummy_release">2017</string>
+    <string name="popular_movie">Popular Movie</string>
+    <string name="top_rated_movie">Top Rated Movie</string>
 </resources>

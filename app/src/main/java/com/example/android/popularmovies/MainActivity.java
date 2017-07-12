@@ -27,8 +27,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 public class MainActivity extends AppCompatActivity implements MovieThumbnailAdapter.MovieThumbnailClickHandler {
     private final String MOVIE_LIST_STATE_KEY = "movie-thumbnail-list";
     private final String MOVIE_DETAILS_KEY = "movie-details";
-    private final String POPULAR_MOVIE = "popular-movie";
-    private final String TOP_RATED_MOVIE = "top-rated-movie";
+    private final String POPULAR_MOVIE = "popular";
+    private final String TOP_RATED_MOVIE = "top_rated";
 
     private final MovieThumbnailAdapter mMovieThumbnailAdapter = new MovieThumbnailAdapter(this);
     private FrameLayout mLoadingHolder;
@@ -70,14 +70,6 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
         String option = "";
 
         switch (item.getItemId()) {
-            case R.id.sort_popularity_asc: option = TheMovieDb.POPULARITY_ASC;
-                break;
-            case R.id.sort_popularity_desc: option = TheMovieDb.POPULARITY_DESC;
-                break;
-            case R.id.sort_average_vote_asc: option = TheMovieDb.AVERAGE_VOTE_ASC;
-                break;
-            case R.id.sort_average_vote_desc: option = TheMovieDb.AVERAGE_VOTE_DESC;
-                break;
             case R.id.popular_movie: option = POPULAR_MOVIE;
                 break;
             case R.id.top_rated_movie: option = TOP_RATED_MOVIE;
@@ -160,14 +152,7 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
             TheMovieDbService service = retrofit.create(TheMovieDbService.class);
             Call<MovieListResponse> caller;
 
-            switch (params[0]) {
-                case POPULAR_MOVIE: caller = service.popularMovie();
-                    break;
-                case TOP_RATED_MOVIE: caller = service.topRatedMovie();
-                    break;
-                default: caller = service.discoverMovie(params[0]);
-                    break;
-            }
+            caller = service.listMovie(params[0]);
 
             try {
                 if (caller != null) {
