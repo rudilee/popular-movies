@@ -44,7 +44,7 @@ public class MovieThumbnailAdapter extends RecyclerView.Adapter<MovieThumbnailAd
         MovieDetail movieDetail = mMovieDetails.get(position);
 
         Picasso.with(holder.thumbnailImageView.getContext())
-                .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_POSTER_SIZE + movieDetail.poster_path)
+                .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_POSTER_SIZE + movieDetail.posterPath)
                 .placeholder(R.mipmap.placeholder)
                 .into(holder.thumbnailImageView);
     }

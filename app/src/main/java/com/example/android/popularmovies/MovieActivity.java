@@ -37,7 +37,7 @@ public class MovieActivity extends AppCompatActivity {
                 MovieDetail movieDetail = intentFromMainActivity.getParcelableExtra("movie-detail");
 
                 String year = String.valueOf(DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(movieDetail.release_date).getYear());
-                String averageRate = new DecimalFormat("###.#").format(movieDetail.vote_average) + "/10";
+                String averageRate = new DecimalFormat("###.#").format(movieDetail.averageVote) + "/10";
 
                 CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
                 collapsingToolbar.setTitle(movieDetail.title);
@@ -46,13 +46,13 @@ public class MovieActivity extends AppCompatActivity {
                 getWindowManager().getDefaultDisplay().getSize(screenSize);
 
                 Picasso.with(this)
-                        .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_BACKDROP_SIZE + movieDetail.backdrop_path)
+                        .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_BACKDROP_SIZE + movieDetail.backdropPath)
                         .resize(screenSize.x, getResources().getDimensionPixelSize(R.dimen.backdrop_height))
                         .centerCrop()
                         .into(backdropImageView);
 
                 Picasso.with(this)
-                        .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_POSTER_SIZE + movieDetail.poster_path)
+                        .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_POSTER_SIZE + movieDetail.posterPath)
                         .placeholder(R.mipmap.placeholder)
                         .into(posterImageView);
 

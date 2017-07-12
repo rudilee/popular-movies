@@ -3,6 +3,8 @@ package com.example.android.popularmovies;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.squareup.moshi.Json;
+
 import java.util.List;
 
 /**
@@ -10,31 +12,31 @@ import java.util.List;
  */
 
 class MovieDetail implements Parcelable {
-    public String poster_path;
+    public @Json(name = "poster_path") String posterPath;
     public Boolean adult;
     public String overview;
     public String release_date;
-    public List<Integer> genre_ids;
+    public @Json(name = "genre_ids") List<Integer> genreIds;
     public int id;
-    public String original_title;
+    public @Json(name = "original_title") String originalTitle;
     public String title;
-    public String backdrop_path;
+    public @Json(name = "backdrop_path") String backdropPath;
     public Float popularity;
-    public int vote_count;
+    public @Json(name = "vote_count") int voteCount;
     public Boolean video;
-    public Float vote_average;
+    public @Json(name = "vote_average") Float averageVote;
 
-    protected MovieDetail(Parcel in) {
-        poster_path = in.readString();
+    private MovieDetail(Parcel in) {
+        posterPath = in.readString();
         overview = in.readString();
         release_date = in.readString();
         id = in.readInt();
-        original_title = in.readString();
+        originalTitle = in.readString();
         title = in.readString();
-        backdrop_path = in.readString();
+        backdropPath = in.readString();
         popularity = in.readFloat();
-        vote_count = in.readInt();
-        vote_average = in.readFloat();
+        voteCount = in.readInt();
+        averageVote = in.readFloat();
     }
 
     public static final Creator<MovieDetail> CREATOR = new Creator<MovieDetail>() {
@@ -54,7 +56,7 @@ class MovieDetail implements Parcelable {
         return  "Title: " + title +
                 "Overview: " + overview +
                 "Release Date: " + release_date +
-                "Vote Average: " + String.valueOf(vote_average);
+                "Vote Average: " + String.valueOf(averageVote);
     }
 
     @Override
@@ -64,15 +66,15 @@ class MovieDetail implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(poster_path);
+        dest.writeString(posterPath);
         dest.writeString(overview);
         dest.writeString(release_date);
         dest.writeInt(id);
-        dest.writeString(original_title);
+        dest.writeString(originalTitle);
         dest.writeString(title);
-        dest.writeString(backdrop_path);
+        dest.writeString(backdropPath);
         dest.writeFloat(popularity);
-        dest.writeInt(vote_count);
-        dest.writeFloat(vote_average);
+        dest.writeInt(voteCount);
+        dest.writeFloat(averageVote);
     }
 }
