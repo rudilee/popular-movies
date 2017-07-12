@@ -4,4 +4,8 @@
     <!--<color name="colorPrimaryDark">#303F9F</color>-->
     <!--<color name="colorAccent">#FF4081</color>-->
     <color name="colorBackground">#FFFFFF</color>
+
+    <color name="darkgray">#757575</color>
+    <color name="darkergray">#727272</color>
+    <color name="black">#000000</color>
 </resources>

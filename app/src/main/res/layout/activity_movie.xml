@@ -19,8 +19,8 @@
             android:layout_height="match_parent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleMarginStart="48dp"
-            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="20dp"
+            app:expandedTitleMarginEnd="20dp"
             android:fitsSystemWindows="true">
 
             <ImageView
@@ -78,14 +78,14 @@
                     <TextView
                         android:id="@+id/tv_release_date"
                         android:textSize="26sp"
-                        android:textColor="#757575"
+                        android:textColor="@color/darkgray"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="2017"/>
 
                     <TextView
                         android:id="@+id/tv_average_rate"
-                        android:textColor="#000"
+                        android:textColor="@color/black"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="8.9/10"/>
@@ -94,7 +94,7 @@
 
             <TextView
                 android:id="@+id/tv_overview"
-                android:textColor="#727272"
+                android:textColor="@color/darkergray"
                 android:textSize="18sp"
                 android:padding="20sp"
                 android:layout_width="match_parent"
