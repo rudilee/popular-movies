@@ -5,4 +5,5 @@
     <string name="popularity_asc">Popularity: Low to High</string>
     <string name="average_vote_desc">Average Vote: High to Low</string>
     <string name="average_vote_asc">Average Vote: Low to High</string>
+    <string name="backdrop_description">Movie backdrop image</string>
 </resources>
