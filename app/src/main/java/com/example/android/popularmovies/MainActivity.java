@@ -1,6 +1,7 @@
 package com.example.android.popularmovies;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
 
     private final MovieThumbnailAdapter mMovieThumbnailAdapter = new MovieThumbnailAdapter(this);
     private FrameLayout mLoadingHolder;
-    private final GridLayoutManager mMovieListLayoutManager = new GridLayoutManager(this, 2);
+    private GridLayoutManager mMovieListLayoutManager;
     private Parcelable mMovieListState = null;
     private List<MovieDetail> mMovieDetails;
 
@@ -42,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
+
+        int column = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT ? 2 : 3;
+        mMovieListLayoutManager = new GridLayoutManager(this, column);
 
         RecyclerView movieThumbnailsRecyclerView = (RecyclerView) findViewById(R.id.rv_movie_thumbnails);
         movieThumbnailsRecyclerView.setLayoutManager(mMovieListLayoutManager);
