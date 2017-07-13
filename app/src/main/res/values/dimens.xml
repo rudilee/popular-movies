@@ -2,9 +2,6 @@
 <resources>
     <dimen name="medium_text">26sp</dimen>
     <dimen name="small_text">18sp</dimen>
-    <dimen name="outer_padding">20sp</dimen>
-    <dimen name="inner_padding">30dp</dimen>
+    <dimen name="inner_padding">20dp</dimen>
     <dimen name="backdrop_height">256dp</dimen>
-    <dimen name="top_padding">10dp</dimen>
-    <dimen name="second_inner_padding">40dp</dimen>
 </resources>

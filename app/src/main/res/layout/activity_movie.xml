@@ -19,8 +19,8 @@
             android:layout_height="match_parent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleMarginStart="@dimen/outer_padding"
-            app:expandedTitleMarginEnd="@dimen/outer_padding"
+            app:expandedTitleMarginStart="@dimen/inner_padding"
+            app:expandedTitleMarginEnd="@dimen/inner_padding"
             android:fitsSystemWindows="true">
 
             <ImageView
@@ -55,7 +55,7 @@
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:paddingTop="@dimen/top_padding"
+                android:paddingTop="@dimen/inner_padding"
                 android:paddingStart="@dimen/inner_padding"
                 android:paddingEnd="@dimen/inner_padding"
                 android:layout_width="match_parent"
@@ -69,8 +69,8 @@
                     tools:src="@mipmap/placeholder"/>
 
                 <LinearLayout
-                    android:paddingStart="@dimen/second_inner_padding"
-                    android:paddingEnd="@dimen/second_inner_padding"
+                    android:paddingStart="@dimen/inner_padding"
+                    android:paddingEnd="@dimen/inner_padding"
                     android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
@@ -82,6 +82,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="@string/dummy_release"/>
+
+                    <RatingBar
+                        android:id="@+id/rb_average_rate"
+                        style="@android:style/Widget.Holo.RatingBar.Indicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/inner_padding"
+                        android:scaleX="0.7"
+                        android:scaleY="0.7"
+                        android:transformPivotX="0dp"
+                        android:transformPivotY="0dp"
+                        android:isIndicator="true"
+                        android:numStars="5"
+                        android:stepSize="0.5"
+                        tools:rating="3.4" />
 
                     <TextView
                         android:id="@+id/tv_average_rate"
@@ -96,7 +111,7 @@
                 android:id="@+id/tv_overview"
                 android:textColor="@color/darkergray"
                 android:textSize="@dimen/small_text"
-                android:padding="@dimen/outer_padding"
+                android:padding="@dimen/inner_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="@string/dummy_overview"/>
