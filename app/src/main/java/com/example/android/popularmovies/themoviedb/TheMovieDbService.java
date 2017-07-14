@@ -13,4 +13,10 @@ import retrofit2.http.Path;
 public interface TheMovieDbService {
     @GET("movie/{sort}?api_key=" + BuildConfig.TMDB_API_KEY)
     Call<MovieListResponse> listMovie(@Path("sort") String order);
+
+    @GET("movie/{movie_id}/videos?api_key=" + BuildConfig.TMDB_API_KEY)
+    Call<MovieVideosResponse> listVideos(@Path("movie_id") int movieId);
+
+    @GET("movie/{movie_id}/reviews?api_key=" + BuildConfig.TMDB_API_KEY)
+    Call<MovieReviewsResponse> listReviews(@Path("movie_id") int movieId);
 }
