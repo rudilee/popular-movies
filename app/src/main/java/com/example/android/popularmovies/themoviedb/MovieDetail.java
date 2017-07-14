@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.themoviedb;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -11,7 +11,7 @@ import java.util.List;
  * Created by rudilee on 6/16/17.
  */
 
-class MovieDetail implements Parcelable {
+public class MovieDetail implements Parcelable {
     public @Json(name = "poster_path") String posterPath;
     public Boolean adult;
     public String overview;

@@ -16,6 +16,11 @@ import android.view.animation.AlphaAnimation;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.example.android.popularmovies.themoviedb.MovieDetail;
+import com.example.android.popularmovies.themoviedb.MovieListResponse;
+import com.example.android.popularmovies.themoviedb.TheMovieDb;
+import com.example.android.popularmovies.themoviedb.TheMovieDbService;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

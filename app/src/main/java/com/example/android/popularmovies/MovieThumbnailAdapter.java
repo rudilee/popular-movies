@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.android.popularmovies.themoviedb.MovieDetail;
+import com.example.android.popularmovies.themoviedb.TheMovieDb;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
