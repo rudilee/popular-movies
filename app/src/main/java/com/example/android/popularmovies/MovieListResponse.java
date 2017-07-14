@@ -1,5 +1,7 @@
 package com.example.android.popularmovies;
 
+import com.squareup.moshi.Json;
+
 import java.util.List;
 
 /**
@@ -9,6 +11,6 @@ import java.util.List;
 class MovieListResponse {
     public int page;
     public List<MovieDetail> results;
-    public int total_results;
-    public int total_pages;
+    public @Json(name = "total_results") int totalResults;
+    public @Json(name = "total_pages") int totalPages;
 }
