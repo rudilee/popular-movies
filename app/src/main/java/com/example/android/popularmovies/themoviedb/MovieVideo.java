@@ -7,7 +7,7 @@ import com.squareup.moshi.Json;
  */
 
 public class MovieVideo {
-    public int id;
+    public String id;
     public @Json(name = "iso_639_1") String iso6391;
     public @Json(name = "iso_3166_1") String iso31661;
     public String key;

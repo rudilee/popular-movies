@@ -11,4 +11,6 @@
     <string name="dummy_release">2017</string>
     <string name="popular_movie">Popular Movie</string>
     <string name="top_rated_movie">Top Rated Movie</string>
+    <string name="video_icon">Movie video icon</string>
+    <string name="play_video">Play</string>
 </resources>
