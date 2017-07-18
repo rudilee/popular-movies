@@ -100,6 +100,15 @@ public class MovieActivity extends AppCompatActivity {
                 averageRateTextView.setText(averageRate);
                 overviewTextView.setText(movieDetail.overview);
 
+                if (getSupportActionBar() != null) {
+                    titleToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            onBackPressed();
+                        }
+                    });
+                }
+
                 if (savedInstanceState == null) {
                     new LoadMovieVideosTask().execute(movieDetail.id);
                     new LoadMovieReviewsTask().execute(movieDetail.id);
