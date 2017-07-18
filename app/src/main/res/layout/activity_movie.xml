@@ -44,6 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
+        android:padding="@dimen/inner_padding"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="com.example.android.popularmovies.MovieActivity">
 
@@ -55,9 +56,6 @@
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:paddingTop="@dimen/inner_padding"
-                android:paddingStart="@dimen/inner_padding"
-                android:paddingEnd="@dimen/inner_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -111,17 +109,16 @@
                 android:id="@+id/tv_overview"
                 android:textColor="@color/darkergray"
                 android:textSize="@dimen/small_text"
-                android:padding="@dimen/inner_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingTop="@dimen/inner_padding"
                 tools:text="@string/dummy_overview"/>
 
             <LinearLayout
                 android:id="@+id/movie_videos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/inner_padding"
-                android:layout_marginEnd="@dimen/inner_padding"
+                android:paddingTop="@dimen/inner_padding"
                 android:orientation="vertical" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
