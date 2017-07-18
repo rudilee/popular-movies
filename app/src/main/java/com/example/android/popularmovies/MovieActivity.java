@@ -106,16 +106,9 @@ public class MovieActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         mMovieVideos = savedInstanceState.getParcelableArrayList(MOVIE_VIDEOS_KEY);
 
+        populateVideos(mMovieVideos);
+
         super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (mMovieVideos != null) {
-            populateVideos(mMovieVideos);
-        }
     }
 
     private void populateVideos(List<MovieVideo> videos) {
