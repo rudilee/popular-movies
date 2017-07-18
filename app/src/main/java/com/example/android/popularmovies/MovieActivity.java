@@ -13,10 +13,13 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.themoviedb.MovieDetail;
+import com.example.android.popularmovies.themoviedb.MovieReview;
+import com.example.android.popularmovies.themoviedb.MovieReviewsResponse;
 import com.example.android.popularmovies.themoviedb.MovieVideo;
 import com.example.android.popularmovies.themoviedb.MovieVideosResponse;
 import com.example.android.popularmovies.themoviedb.TheMovieDb;
@@ -36,8 +39,11 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class MovieActivity extends AppCompatActivity {
     private final String MOVIE_VIDEOS_KEY = "movie-videos";
+    private final String MOVIE_REVIEWS_KEY = "movie-reviews";
 
+    private TheMovieDbService mService;
     private List<MovieVideo> mMovieVideos;
+    private List<MovieReview> mMovieReviews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,12 @@ public class MovieActivity extends AppCompatActivity {
         Intent intentFromMainActivity = getIntent();
         if (intentFromMainActivity != null) {
             if (intentFromMainActivity.hasExtra("movie-detail")) {
+                mService = new Retrofit.Builder()
+                        .baseUrl(TheMovieDb.TMDB_BASE_URL)
+                        .addConverterFactory(MoshiConverterFactory.create())
+                        .build()
+                        .create(TheMovieDbService.class);
+
                 ImageView backdropImageView = (ImageView) findViewById(R.id.iv_backdrop);
                 ImageView posterImageView = (ImageView) findViewById(R.id.iv_poster);
                 TextView releaseDateTextView = (TextView) findViewById(R.id.tv_release_date);
@@ -90,6 +102,7 @@ public class MovieActivity extends AppCompatActivity {
 
                 if (savedInstanceState == null) {
                     new LoadMovieVideosTask().execute(movieDetail.id);
+                    new LoadMovieReviewsTask().execute(movieDetail.id);
                 }
             }
         }
@@ -100,18 +113,41 @@ public class MovieActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
 
         outState.putParcelableArrayList(MOVIE_VIDEOS_KEY, (ArrayList<? extends Parcelable>) mMovieVideos);
+        outState.putParcelableArrayList(MOVIE_REVIEWS_KEY, (ArrayList<? extends Parcelable>) mMovieReviews);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         mMovieVideos = savedInstanceState.getParcelableArrayList(MOVIE_VIDEOS_KEY);
+        mMovieReviews = savedInstanceState.getParcelableArrayList(MOVIE_REVIEWS_KEY);
 
         populateVideos(mMovieVideos);
+        populateReviews(mMovieReviews);
 
         super.onRestoreInstanceState(savedInstanceState);
     }
 
+    private void toggleLoading(boolean loading, int progressId, int layoutId) {
+        ProgressBar progress = (ProgressBar) findViewById(progressId);
+        LinearLayout layout = (LinearLayout) findViewById(layoutId);
+
+        progress.setVisibility(loading ? View.VISIBLE : View.GONE);
+        layout.setVisibility(loading ? View.GONE : View.VISIBLE);
+    }
+
+    private void toggleVideosLoading(boolean loading) {
+        toggleLoading(loading, R.id.pb_videos_loading, R.id.movie_videos);
+    }
+
+    private void toggleReviewsLoading(boolean loading) {
+        toggleLoading(loading, R.id.pb_reviews_loading, R.id.movie_reviews);
+    }
+
     private void populateVideos(List<MovieVideo> videos) {
+        if (videos == null) {
+            return;
+        }
+
         LinearLayout videoList = (LinearLayout) findViewById(R.id.movie_videos);
 
         for (int i = 0; i < videos.size(); i++) {
@@ -143,24 +179,45 @@ public class MovieActivity extends AppCompatActivity {
         }
     }
 
+    private void populateReviews(List<MovieReview> reviews) {
+        if (reviews == null) {
+            return;
+        }
+
+        LinearLayout reviewList = (LinearLayout) findViewById(R.id.movie_reviews);
+
+        for (int i = 0; i < reviews.size(); i++) {
+            View reviewView = getLayoutInflater().inflate(R.layout.movie_review, null);
+
+            TextView contentTextView = (TextView) reviewView.findViewById(R.id.tv_content);
+            TextView authorTextView = (TextView) reviewView.findViewById(R.id.tv_author);
+
+            MovieReview review = reviews.get(i);
+            contentTextView.setText(review.content);
+            authorTextView.setText(review.author);
+
+            reviewList.addView(reviewView);
+        }
+    }
+
     private class LoadMovieVideosTask extends AsyncTask<Integer, Void, List<MovieVideo> > {
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            toggleVideosLoading(true);
+        }
+
+        @Override
         protected List<MovieVideo> doInBackground(Integer... params) {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(TheMovieDb.TMDB_BASE_URL)
-                    .addConverterFactory(MoshiConverterFactory.create())
-                    .build();
-
-            TheMovieDbService service = retrofit.create(TheMovieDbService.class);
-            Call<MovieVideosResponse> caller;
-
-            caller = service.listVideos(params[0]);
+            Call<MovieVideosResponse> videosCaller;
+            videosCaller = mService.listVideos(params[0]);
 
             try {
-                if (caller != null) {
-                    MovieVideosResponse movieListResponse = caller.execute().body();
-                    if (movieListResponse != null) {
-                        mMovieVideos = movieListResponse.results;
+                if (videosCaller != null) {
+                    MovieVideosResponse response = videosCaller.execute().body();
+                    if (response != null) {
+                        mMovieVideos = response.results;
                     }
                 }
             } catch (IOException e) {
@@ -175,6 +232,44 @@ public class MovieActivity extends AppCompatActivity {
             super.onPostExecute(movieVideos);
 
             populateVideos(movieVideos);
+            toggleVideosLoading(false);
+        }
+    }
+
+    private class LoadMovieReviewsTask extends AsyncTask<Integer, Void, List<MovieReview> > {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            toggleReviewsLoading(true);
+        }
+
+        @Override
+        protected List<MovieReview> doInBackground(Integer... params) {
+
+            Call<MovieReviewsResponse> reviewsCaller;
+            reviewsCaller = mService.listReviews(params[0]);
+
+            if (reviewsCaller != null) {
+                try {
+                    MovieReviewsResponse response = reviewsCaller.execute().body();
+                    if (response != null) {
+                        mMovieReviews = response.results;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return mMovieReviews;
+        }
+
+        @Override
+        protected void onPostExecute(List<MovieReview> movieReviews) {
+            super.onPostExecute(movieReviews);
+
+            populateReviews(movieReviews);
+            toggleReviewsLoading(false);
         }
     }
 }

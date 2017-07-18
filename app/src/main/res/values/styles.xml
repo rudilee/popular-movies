@@ -6,7 +6,24 @@
         <!--<item name="colorPrimary">@color/colorPrimary</item>-->
         <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
         <!--<item name="colorAccent">@color/colorAccent</item>-->
+        <item name="android:textColor">@android:color/black</item>
         <item name="android:colorBackground">@color/colorBackground</item>
+    </style>
+
+    <style name="MovieItem"></style>
+
+    <style name="SubHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/inner_padding</item>
+        <item name="android:layout_marginBottom">@dimen/small_padding</item>
+        <item name="android:textColor">@color/dark_gray</item>
+        <item name="android:textSize">@dimen/tiny_text</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SubHeader2" parent="SubHeader">
+        <item name="android:layout_marginBottom">30dp</item>
     </style>
 
 </resources>

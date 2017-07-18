@@ -13,4 +13,8 @@
     <string name="top_rated_movie">Top Rated Movie</string>
     <string name="video_icon">Movie video icon</string>
     <string name="play_video">Play</string>
+    <string name="overview">Overview</string>
+    <string name="videos">Videos</string>
+    <string name="reviews">Reviews</string>
+    <string name="dummy_reviewer">Reviewer Name</string>
 </resources>
