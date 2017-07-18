@@ -5,11 +5,12 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -26,14 +27,18 @@ import org.joda.time.format.DateTimeFormat;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class MovieActivity extends AppCompatActivity {
+    private final String MOVIE_VIDEOS_KEY = "movie-videos";
+
+    private List<MovieVideo> mMovieVideos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,8 +88,33 @@ public class MovieActivity extends AppCompatActivity {
                 averageRateTextView.setText(averageRate);
                 overviewTextView.setText(movieDetail.overview);
 
-                new LoadMovieVideosTask().execute(movieDetail.id);
+                if (savedInstanceState == null) {
+                    new LoadMovieVideosTask().execute(movieDetail.id);
+                }
             }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelableArrayList(MOVIE_VIDEOS_KEY, (ArrayList<? extends Parcelable>) mMovieVideos);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        mMovieVideos = savedInstanceState.getParcelableArrayList(MOVIE_VIDEOS_KEY);
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mMovieVideos != null) {
+            populateVideos(mMovieVideos);
         }
     }
 
@@ -94,7 +124,7 @@ public class MovieActivity extends AppCompatActivity {
         for (int i = 0; i < videos.size(); i++) {
             View videoView = getLayoutInflater().inflate(R.layout.movie_video, null);
 
-            Button playVideoButton = (Button) videoView.findViewById(R.id.b_play_video);
+            ImageButton videoIconButton = (ImageButton) videoView.findViewById(R.id.ib_video_icon);
             TextView nameTextView = (TextView) videoView.findViewById(R.id.tv_name);
             TextView typeTextView = (TextView) videoView.findViewById(R.id.tv_type);
 
@@ -102,17 +132,17 @@ public class MovieActivity extends AppCompatActivity {
             nameTextView.setText(video.name);
             typeTextView.setText(video.type);
 
-            playVideoButton.setTag(video);
-            playVideoButton.setOnClickListener(new View.OnClickListener() {
+            videoIconButton.setTag(video);
+            videoIconButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MovieVideo video = (MovieVideo) view.findViewById(R.id.b_play_video).getTag();
+                    MovieVideo video = (MovieVideo) view.findViewById(R.id.ib_video_icon).getTag();
 
-//                    if (video.site == "YouTube") {
+                    if (video.site.contentEquals("YouTube")) {
                         String videoUrl = "https://www.youtube.com/watch?v=" + video.key;
                         Intent playYoutubeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl));
                         startActivity(playYoutubeIntent);
-//                    }
+                    }
                 }
             });
 
@@ -137,14 +167,14 @@ public class MovieActivity extends AppCompatActivity {
                 if (caller != null) {
                     MovieVideosResponse movieListResponse = caller.execute().body();
                     if (movieListResponse != null) {
-                        return movieListResponse.results;
+                        mMovieVideos = movieListResponse.results;
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            return null;
+            return mMovieVideos;
         }
 
         @Override
