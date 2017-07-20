@@ -83,7 +83,7 @@
                         tools:text="@string/dummy_release" />
 
                     <RatingBar
-                        android:id="@+id/rb_average_rate"
+                        android:id="@+id/rb_rating"
                         style="@android:style/Widget.Holo.RatingBar.Indicator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

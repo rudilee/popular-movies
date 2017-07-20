@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
@@ -36,27 +38,28 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
     private final String TOP_RATED_MOVIE = "top_rated";
 
     private final MovieThumbnailAdapter mMovieThumbnailAdapter = new MovieThumbnailAdapter(this);
-    private FrameLayout mLoadingHolder;
     private GridLayoutManager mMovieListLayoutManager;
     private Parcelable mMovieListState = null;
     private List<MovieDetail> mMovieDetails;
+
+    @BindView(R.id.main_toolbar) Toolbar mMainToolbar;
+    @BindView(R.id.rv_movie_thumbnails) RecyclerView mMovieThumbnails;
+    @BindView(R.id.loading_holder) FrameLayout mLoadingHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        setSupportActionBar(toolbar);
+        ButterKnife.bind(this);
+
+        setSupportActionBar(mMainToolbar);
 
         int column = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT ? 2 : 3;
         mMovieListLayoutManager = new GridLayoutManager(this, column);
 
-        RecyclerView movieThumbnailsRecyclerView = (RecyclerView) findViewById(R.id.rv_movie_thumbnails);
-        movieThumbnailsRecyclerView.setLayoutManager(mMovieListLayoutManager);
-        movieThumbnailsRecyclerView.setAdapter(mMovieThumbnailAdapter);
-
-        mLoadingHolder = (FrameLayout) findViewById(R.id.loading_holder);
+        mMovieThumbnails.setLayoutManager(mMovieListLayoutManager);
+        mMovieThumbnails.setAdapter(mMovieThumbnailAdapter);
 
         if (savedInstanceState == null) {
             loadMovieList(POPULAR_MOVIE);

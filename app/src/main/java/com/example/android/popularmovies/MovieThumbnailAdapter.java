@@ -13,6 +13,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by rudilee on 6/16/17.
  */
@@ -45,10 +48,10 @@ public class MovieThumbnailAdapter extends RecyclerView.Adapter<MovieThumbnailAd
     public void onBindViewHolder(MovieThumbnailViewHolder holder, int position) {
         MovieDetail movieDetail = mMovieDetails.get(position);
 
-        Picasso.with(holder.thumbnailImageView.getContext())
+        Picasso.with(holder.mMovieThumbnail.getContext())
                 .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_POSTER_SIZE + movieDetail.posterPath)
                 .placeholder(R.mipmap.placeholder)
-                .into(holder.thumbnailImageView);
+                .into(holder.mMovieThumbnail);
     }
 
     @Override
@@ -61,14 +64,14 @@ public class MovieThumbnailAdapter extends RecyclerView.Adapter<MovieThumbnailAd
     }
 
     class MovieThumbnailViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        final ImageView thumbnailImageView;
+        @BindView(R.id.iv_movie_thumbnail) ImageView mMovieThumbnail;
 
-        public MovieThumbnailViewHolder(View itemView) {
-            super(itemView);
+        public MovieThumbnailViewHolder(View view) {
+            super(view);
 
-            itemView.setOnClickListener(this);
+            ButterKnife.bind(this, view);
 
-            thumbnailImageView = (ImageView) itemView.findViewById(R.id.iv_movie_thumbnail);
+            view.setOnClickListener(this);
         }
 
         @Override

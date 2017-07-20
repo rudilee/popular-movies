@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -34,6 +33,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
@@ -43,16 +44,27 @@ public class MovieActivity extends AppCompatActivity {
     private final String MOVIE_REVIEWS_KEY = "movie-reviews";
 
     private TheMovieDbService mService;
-    private List<MovieVideo> mMovieVideos;
-    private List<MovieReview> mMovieReviews;
+    private List<MovieVideo> mVideos;
+    private List<MovieReview> mReviews;
+
+    @BindView(R.id.title_toolbar) Toolbar mTitleToolbar;
+    @BindView(R.id.iv_backdrop) ImageView mBackdrop;
+    @BindView(R.id.iv_poster) ImageView mPoster;
+    @BindView(R.id.tv_release_date) TextView mReleaseDate;
+    @BindView(R.id.rb_rating) RatingBar mRating;
+    @BindView(R.id.tv_average_rate) TextView mAverageRate;
+    @BindView(R.id.tv_overview) TextView mOverview;
+    @BindView(R.id.movie_videos) LinearLayout mMovieVideos;
+    @BindView(R.id.movie_reviews) LinearLayout mMovieReviews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
 
-        Toolbar titleToolbar = (Toolbar) findViewById(R.id.title_toolbar);
-        setSupportActionBar(titleToolbar);
+        ButterKnife.bind(this);
+
+        setSupportActionBar(mTitleToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intentFromMainActivity = getIntent();
@@ -63,13 +75,6 @@ public class MovieActivity extends AppCompatActivity {
                         .addConverterFactory(MoshiConverterFactory.create())
                         .build()
                         .create(TheMovieDbService.class);
-
-                ImageView backdropImageView = (ImageView) findViewById(R.id.iv_backdrop);
-                ImageView posterImageView = (ImageView) findViewById(R.id.iv_poster);
-                TextView releaseDateTextView = (TextView) findViewById(R.id.tv_release_date);
-                RatingBar averageRateRatingBar = (RatingBar) findViewById(R.id.rb_average_rate);
-                TextView averageRateTextView = (TextView) findViewById(R.id.tv_average_rate);
-                TextView overviewTextView = (TextView) findViewById(R.id.tv_overview);
 
                 MovieDetail movieDetail = intentFromMainActivity.getParcelableExtra("movie-detail");
 
@@ -86,23 +91,23 @@ public class MovieActivity extends AppCompatActivity {
                         .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_BACKDROP_SIZE + movieDetail.backdropPath)
                         .resize(screenSize.x, getResources().getDimensionPixelSize(R.dimen.backdrop_height))
                         .centerCrop()
-                        .into(backdropImageView);
+                        .into(mBackdrop);
 
                 Picasso.with(this)
                         .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_POSTER_SIZE + movieDetail.posterPath)
                         .placeholder(R.mipmap.placeholder)
-                        .into(posterImageView);
+                        .into(mPoster);
 
-                releaseDateTextView.setText(year);
+                mReleaseDate.setText(year);
 
-                averageRateRatingBar.setMax(10);
-                averageRateRatingBar.setRating(movieDetail.averageVote / 2);
+                mRating.setMax(10);
+                mRating.setRating(movieDetail.averageVote / 2);
 
-                averageRateTextView.setText(averageRate);
-                overviewTextView.setText(movieDetail.overview);
+                mAverageRate.setText(averageRate);
+                mOverview.setText(movieDetail.overview);
 
                 if (getSupportActionBar() != null) {
-                    titleToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    mTitleToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             onBackPressed();
@@ -122,17 +127,17 @@ public class MovieActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelableArrayList(MOVIE_VIDEOS_KEY, (ArrayList<? extends Parcelable>) mMovieVideos);
-        outState.putParcelableArrayList(MOVIE_REVIEWS_KEY, (ArrayList<? extends Parcelable>) mMovieReviews);
+        outState.putParcelableArrayList(MOVIE_VIDEOS_KEY, (ArrayList<? extends Parcelable>) mVideos);
+        outState.putParcelableArrayList(MOVIE_REVIEWS_KEY, (ArrayList<? extends Parcelable>) mReviews);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        mMovieVideos = savedInstanceState.getParcelableArrayList(MOVIE_VIDEOS_KEY);
-        mMovieReviews = savedInstanceState.getParcelableArrayList(MOVIE_REVIEWS_KEY);
+        mVideos = savedInstanceState.getParcelableArrayList(MOVIE_VIDEOS_KEY);
+        mReviews = savedInstanceState.getParcelableArrayList(MOVIE_REVIEWS_KEY);
 
-        populateVideos(mMovieVideos);
-        populateReviews(mMovieReviews);
+        populateVideos(mVideos);
+        populateReviews(mReviews);
 
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -158,14 +163,12 @@ public class MovieActivity extends AppCompatActivity {
             return;
         }
 
-        LinearLayout videoList = (LinearLayout) findViewById(R.id.movie_videos);
-
         for (int i = 0; i < videos.size(); i++) {
             View videoView = getLayoutInflater().inflate(R.layout.movie_video, null);
 
-            ImageButton videoIconButton = (ImageButton) videoView.findViewById(R.id.ib_video_icon);
-            TextView nameTextView = (TextView) videoView.findViewById(R.id.tv_name);
-            TextView typeTextView = (TextView) videoView.findViewById(R.id.tv_type);
+            ImageButton videoIconButton = ButterKnife.findById(videoView, R.id.ib_video_icon);
+            TextView nameTextView = ButterKnife.findById(videoView, R.id.tv_name);
+            TextView typeTextView = ButterKnife.findById(videoView, R.id.tv_type);
 
             MovieVideo video = videos.get(i);
             nameTextView.setText(video.name);
@@ -185,7 +188,7 @@ public class MovieActivity extends AppCompatActivity {
                 }
             });
 
-            videoList.addView(videoView);
+            mMovieVideos.addView(videoView);
         }
     }
 
@@ -194,19 +197,17 @@ public class MovieActivity extends AppCompatActivity {
             return;
         }
 
-        LinearLayout reviewList = (LinearLayout) findViewById(R.id.movie_reviews);
-
         for (int i = 0; i < reviews.size(); i++) {
             View reviewView = getLayoutInflater().inflate(R.layout.movie_review, null);
 
-            TextView contentTextView = (TextView) reviewView.findViewById(R.id.tv_content);
-            TextView authorTextView = (TextView) reviewView.findViewById(R.id.tv_author);
+            TextView contentTextView = ButterKnife.findById(reviewView, R.id.tv_content);
+            TextView authorTextView = ButterKnife.findById(reviewView, R.id.tv_author);
 
             MovieReview review = reviews.get(i);
             contentTextView.setText(review.content);
             authorTextView.setText(review.author);
 
-            reviewList.addView(reviewView);
+            mMovieReviews.addView(reviewView);
         }
     }
 
@@ -227,14 +228,14 @@ public class MovieActivity extends AppCompatActivity {
                 if (videosCaller != null) {
                     MovieVideosResponse response = videosCaller.execute().body();
                     if (response != null) {
-                        mMovieVideos = response.results;
+                        mVideos = response.results;
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            return mMovieVideos;
+            return mVideos;
         }
 
         @Override
@@ -264,14 +265,14 @@ public class MovieActivity extends AppCompatActivity {
                 try {
                     MovieReviewsResponse response = reviewsCaller.execute().body();
                     if (response != null) {
-                        mMovieReviews = response.results;
+                        mReviews = response.results;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
 
-            return mMovieReviews;
+            return mReviews;
         }
 
         @Override
