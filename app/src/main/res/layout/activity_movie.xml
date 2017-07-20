@@ -109,11 +109,12 @@
                 style="@style/SubHeader"
                 android:text="@string/overview" />
 
-            <TextView
+            <com.example.android.popularmovies.ExpandableTextView
                 android:id="@+id/tv_overview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/small_text"
+                android:maxLines="6"
                 tools:text="@string/dummy_overview" />
 
             <TextView
