@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -65,7 +66,18 @@ public class MovieActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mTitleToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
+            mTitleToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        }
 
         Intent intentFromMainActivity = getIntent();
         if (intentFromMainActivity != null) {
@@ -105,15 +117,6 @@ public class MovieActivity extends AppCompatActivity {
 
                 mAverageRate.setText(averageRate);
                 mOverview.setText(movieDetail.overview);
-
-                if (getSupportActionBar() != null) {
-                    mTitleToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            onBackPressed();
-                        }
-                    });
-                }
 
                 if (savedInstanceState == null) {
                     new LoadMovieVideosTask().execute(movieDetail.id);
