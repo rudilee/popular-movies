@@ -1,6 +1,9 @@
 package com.example.android.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -11,12 +14,15 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.popularmovies.themoviedb.MovieDetail;
 import com.example.android.popularmovies.themoviedb.MovieReview;
@@ -36,6 +42,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
@@ -47,6 +54,7 @@ public class MovieActivity extends AppCompatActivity {
     private TheMovieDbService mService;
     private List<MovieVideo> mVideos;
     private List<MovieReview> mReviews;
+    private MovieDetail mMovieDetail = null;
 
     @BindView(R.id.title_toolbar) Toolbar mTitleToolbar;
     @BindView(R.id.iv_backdrop) ImageView mBackdrop;
@@ -57,6 +65,7 @@ public class MovieActivity extends AppCompatActivity {
     @BindView(R.id.tv_overview) TextView mOverview;
     @BindView(R.id.movie_videos) LinearLayout mMovieVideos;
     @BindView(R.id.movie_reviews) LinearLayout mMovieReviews;
+    @BindView(R.id.cb_favorite) CheckBox mFavoriteMovie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,39 +97,40 @@ public class MovieActivity extends AppCompatActivity {
                         .build()
                         .create(TheMovieDbService.class);
 
-                MovieDetail movieDetail = intentFromMainActivity.getParcelableExtra("movie-detail");
+                mMovieDetail = intentFromMainActivity.getParcelableExtra("movie-detail");
 
-                String year = String.valueOf(DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(movieDetail.release_date).getYear());
-                String averageRate = new DecimalFormat("###.#").format(movieDetail.averageVote) + "/10";
+                String year = String.valueOf(DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(mMovieDetail.releaseDate).getYear());
+                String averageRate = new DecimalFormat("###.#").format(mMovieDetail.averageVote) + "/10";
 
                 CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-                collapsingToolbar.setTitle(movieDetail.title);
+                collapsingToolbar.setTitle(mMovieDetail.title);
 
                 Point screenSize = new Point();
                 getWindowManager().getDefaultDisplay().getSize(screenSize);
 
                 Picasso.with(this)
-                        .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_BACKDROP_SIZE + movieDetail.backdropPath)
+                        .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_BACKDROP_SIZE + mMovieDetail.backdropPath)
                         .resize(screenSize.x, getResources().getDimensionPixelSize(R.dimen.backdrop_height))
                         .centerCrop()
                         .into(mBackdrop);
 
                 Picasso.with(this)
-                        .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_POSTER_SIZE + movieDetail.posterPath)
+                        .load(TheMovieDb.TMDB_IMAGE_BASE_URL + TheMovieDb.TMDB_POSTER_SIZE + mMovieDetail.posterPath)
                         .placeholder(R.mipmap.placeholder)
                         .into(mPoster);
 
                 mReleaseDate.setText(year);
 
                 mRating.setMax(10);
-                mRating.setRating(movieDetail.averageVote / 2);
+                mRating.setRating(mMovieDetail.averageVote / 2);
 
                 mAverageRate.setText(averageRate);
-                mOverview.setText(movieDetail.overview);
+                mOverview.setText(mMovieDetail.overview);
+                mFavoriteMovie.setChecked(checkIfMovieIsFavorited());
 
                 if (savedInstanceState == null) {
-                    new LoadMovieVideosTask().execute(movieDetail.id);
-                    new LoadMovieReviewsTask().execute(movieDetail.id);
+                    new LoadMovieVideosTask().execute(mMovieDetail.id);
+                    new LoadMovieReviewsTask().execute(mMovieDetail.id);
                 }
             }
         }
@@ -143,6 +153,48 @@ public class MovieActivity extends AppCompatActivity {
         populateReviews(mReviews);
 
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @OnCheckedChanged(R.id.cb_favorite)
+    public void favoriteMovie(CompoundButton buttonView, boolean isChecked) {
+        if (mMovieDetail == null) {
+            return;
+        }
+
+        FavoriteMovieDBHelper dbHelper = new FavoriteMovieDBHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String message = isChecked ? "Movie added to favorite list" : "Movie removed from favorite list";
+
+        if (isChecked) {
+            ContentValues values = new ContentValues();
+            values.put(FavoriteMovieContract.MovieDetail.COLUMN_POSTER_PATH, mMovieDetail.posterPath);
+            values.put(FavoriteMovieContract.MovieDetail.COLUMN_OVERVIEW, mMovieDetail.overview);
+            values.put(FavoriteMovieContract.MovieDetail.COLUMN_RELEASE_DATE, mMovieDetail.releaseDate);
+            values.put(FavoriteMovieContract.MovieDetail.COLUMN_ID, mMovieDetail.id);
+            values.put(FavoriteMovieContract.MovieDetail.COLUMN_TITLE, mMovieDetail.title);
+            values.put(FavoriteMovieContract.MovieDetail.COLUMN_BACKDROP_PATH, mMovieDetail.backdropPath);
+            values.put(FavoriteMovieContract.MovieDetail.COLUMN_VOTE_AVERAGE, mMovieDetail.averageVote);
+
+            db.insert(FavoriteMovieContract.MovieDetail.TABLE_NAME, null, values);
+        } else {
+            String[] whereArgs = {String.valueOf(mMovieDetail.id)};
+
+            db.delete(FavoriteMovieContract.MovieDetail.TABLE_NAME, FavoriteMovieContract.MovieDetail.COLUMN_ID + " = ?", whereArgs);
+        }
+
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean checkIfMovieIsFavorited() {
+        FavoriteMovieDBHelper dbHelper = new FavoriteMovieDBHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String[] selectionArgs = {String.valueOf(mMovieDetail.id)};
+        Cursor cursor = db.query(FavoriteMovieContract.MovieDetail.TABLE_NAME, null, FavoriteMovieContract.MovieDetail.COLUMN_ID + " = ?", selectionArgs, null, null, null);
+        boolean movieFavorited = cursor.getCount() > 0;
+
+        cursor.close();
+
+        return movieFavorited;
     }
 
     private void toggleLoading(boolean loading, int progressId, int layoutId) {

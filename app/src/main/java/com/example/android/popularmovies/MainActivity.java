@@ -2,6 +2,8 @@ package com.example.android.popularmovies;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
     private final String MOVIE_DETAILS_KEY = "movie-details";
     private final String POPULAR_MOVIE = "popular";
     private final String TOP_RATED_MOVIE = "top_rated";
+    private final String FAVORITE_MOVIE = "favorite_movie";
 
     private final MovieThumbnailAdapter mMovieThumbnailAdapter = new MovieThumbnailAdapter(this);
     private GridLayoutManager mMovieListLayoutManager;
@@ -82,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
                 break;
             case R.id.top_rated_movie: option = TOP_RATED_MOVIE;
                 break;
+            case R.id.favorite_movie: option = FAVORITE_MOVIE;
         }
 
         if (!option.isEmpty()) {
@@ -147,11 +151,39 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
         protected void onPreExecute() {
             super.onPreExecute();
 
+            if (mMovieDetails != null) {
+                mMovieDetails.clear();
+            }
+
             toggleLoading(true);
         }
 
-        @Override
-        protected List<MovieDetail> doInBackground(String... params) {
+        private List<MovieDetail> loadFavoriteMovies() {
+            FavoriteMovieDBHelper dbHelper = new FavoriteMovieDBHelper(getApplicationContext());
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            Cursor cursor = db.query(FavoriteMovieContract.MovieDetail.TABLE_NAME, null, null, null, null, null, FavoriteMovieContract.MovieDetail.COLUMN_ID);
+
+            while (cursor.moveToNext()) {
+                MovieDetail movieDetail = new MovieDetail();
+                movieDetail.posterPath = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_POSTER_PATH));
+                movieDetail.overview = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_OVERVIEW));
+                movieDetail.releaseDate = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_RELEASE_DATE));
+                movieDetail.id = cursor.getInt(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_ID));
+                movieDetail.title = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_TITLE));
+                movieDetail.backdropPath = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_BACKDROP_PATH));
+                movieDetail.averageVote = cursor.getFloat(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_VOTE_AVERAGE));
+
+                mMovieDetails.add(movieDetail);
+            }
+
+            cursor.close();
+
+            mRetrieveSuccess = true;
+
+            return mMovieDetails;
+        }
+
+        private List<MovieDetail> loadMoviesByOrder(String order) {
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(TheMovieDb.TMDB_BASE_URL)
                     .addConverterFactory(MoshiConverterFactory.create())
@@ -160,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
             TheMovieDbService service = retrofit.create(TheMovieDbService.class);
             Call<MovieListResponse> caller;
 
-            caller = service.listMovie(params[0]);
+            caller = service.listMovie(order);
 
             try {
                 if (caller != null) {
@@ -176,6 +208,15 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
             }
 
             return mMovieDetails;
+        }
+
+        @Override
+        protected List<MovieDetail> doInBackground(String... params) {
+            if (params[0].equals(FAVORITE_MOVIE)) {
+                return loadFavoriteMovies();
+            }
+
+            return loadMoviesByOrder(params[0]);
         }
 
         @Override

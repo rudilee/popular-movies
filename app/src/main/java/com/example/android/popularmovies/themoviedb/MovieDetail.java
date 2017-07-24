@@ -13,29 +13,22 @@ import java.util.List;
 
 public class MovieDetail implements Parcelable {
     public @Json(name = "poster_path") String posterPath;
-    public Boolean adult;
     public String overview;
-    public String release_date;
-    public @Json(name = "genre_ids") List<Integer> genreIds;
+    public @Json(name = "release_date") String releaseDate;
     public int id;
-    public @Json(name = "original_title") String originalTitle;
     public String title;
     public @Json(name = "backdrop_path") String backdropPath;
-    public Float popularity;
-    public @Json(name = "vote_count") int voteCount;
-    public Boolean video;
     public @Json(name = "vote_average") Float averageVote;
+
+    public MovieDetail() {}
 
     private MovieDetail(Parcel in) {
         posterPath = in.readString();
         overview = in.readString();
-        release_date = in.readString();
+        releaseDate = in.readString();
         id = in.readInt();
-        originalTitle = in.readString();
         title = in.readString();
         backdropPath = in.readString();
-        popularity = in.readFloat();
-        voteCount = in.readInt();
         averageVote = in.readFloat();
     }
 
@@ -55,7 +48,7 @@ public class MovieDetail implements Parcelable {
     public String toString() {
         return  "Title: " + title +
                 "Overview: " + overview +
-                "Release Date: " + release_date +
+                "Release Date: " + releaseDate +
                 "Vote Average: " + String.valueOf(averageVote);
     }
 
@@ -68,13 +61,10 @@ public class MovieDetail implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(posterPath);
         dest.writeString(overview);
-        dest.writeString(release_date);
+        dest.writeString(releaseDate);
         dest.writeInt(id);
-        dest.writeString(originalTitle);
         dest.writeString(title);
         dest.writeString(backdropPath);
-        dest.writeFloat(popularity);
-        dest.writeInt(voteCount);
         dest.writeFloat(averageVote);
     }
 }

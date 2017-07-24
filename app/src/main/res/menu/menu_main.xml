@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/popular_movie"
         android:title="@string/popular_movie" />
     <item
         android:id="@+id/top_rated_movie"
         android:title="@string/top_rated_movie" />
+    <item
+        android:id="@+id/favorite_movie"
+        android:title="Favorite Movie" />
 </menu>

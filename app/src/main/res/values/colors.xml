@@ -6,4 +6,5 @@
     <color name="colorBackground">#FFFFFF</color>
 
     <color name="dark_gray">#757575</color>
+    <color name="crimson">#DC143C</color>
 </resources>
