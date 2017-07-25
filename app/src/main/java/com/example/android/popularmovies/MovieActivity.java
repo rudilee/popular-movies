@@ -72,22 +72,6 @@ public class MovieActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
 
-        ButterKnife.bind(this);
-
-        setSupportActionBar(mTitleToolbar);
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-
-            mTitleToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
-        }
-
         Intent intentFromMainActivity = getIntent();
         if (intentFromMainActivity != null) {
             if (intentFromMainActivity.hasExtra("movie-detail")) {
@@ -98,6 +82,14 @@ public class MovieActivity extends AppCompatActivity {
                         .create(TheMovieDbService.class);
 
                 mMovieDetail = intentFromMainActivity.getParcelableExtra("movie-detail");
+
+                /*
+                    Kind of a hack to workaround of event triggered from setChecked()
+                    by bind ButterKnife after setChecked() called.
+                 */
+                ((CheckBox) findViewById(R.id.cb_favorite)).setChecked(checkIfMovieIsFavorited());
+
+                ButterKnife.bind(this);
 
                 String year = String.valueOf(DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(mMovieDetail.releaseDate).getYear());
                 String averageRate = new DecimalFormat("###.#").format(mMovieDetail.averageVote) + "/10";
@@ -126,13 +118,26 @@ public class MovieActivity extends AppCompatActivity {
 
                 mAverageRate.setText(averageRate);
                 mOverview.setText(mMovieDetail.overview);
-                mFavoriteMovie.setChecked(checkIfMovieIsFavorited());
 
                 if (savedInstanceState == null) {
                     new LoadMovieVideosTask().execute(mMovieDetail.id);
                     new LoadMovieReviewsTask().execute(mMovieDetail.id);
                 }
             }
+        }
+
+        setSupportActionBar(mTitleToolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
+            mTitleToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
         }
     }
 
