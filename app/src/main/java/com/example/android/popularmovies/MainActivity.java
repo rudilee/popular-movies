@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
         }
 
         private List<MovieDetail> loadFavoriteMovies() {
-            FavoriteMovieDBHelper dbHelper = new FavoriteMovieDBHelper(getApplicationContext());
+            FavoriteMovieDatabaseHelper dbHelper = new FavoriteMovieDatabaseHelper(getApplicationContext());
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             Cursor cursor = db.query(FavoriteMovieContract.MovieDetail.TABLE_NAME, null, null, null, null, null, FavoriteMovieContract.MovieDetail.COLUMN_ID);
 

@@ -166,7 +166,7 @@ public class MovieActivity extends AppCompatActivity {
             return;
         }
 
-        FavoriteMovieDBHelper dbHelper = new FavoriteMovieDBHelper(getApplicationContext());
+        FavoriteMovieDatabaseHelper dbHelper = new FavoriteMovieDatabaseHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String message = isChecked ? "Movie added to favorite list" : "Movie removed from favorite list";
 
@@ -191,7 +191,7 @@ public class MovieActivity extends AppCompatActivity {
     }
 
     private boolean checkIfMovieIsFavorited() {
-        FavoriteMovieDBHelper dbHelper = new FavoriteMovieDBHelper(getApplicationContext());
+        FavoriteMovieDatabaseHelper dbHelper = new FavoriteMovieDatabaseHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String[] selectionArgs = {String.valueOf(mMovieDetail.id)};
         Cursor cursor = db.query(FavoriteMovieContract.MovieDetail.TABLE_NAME, null, FavoriteMovieContract.MovieDetail.COLUMN_ID + " = ?", selectionArgs, null, null, null);

@@ -10,11 +10,11 @@ import com.example.android.popularmovies.FavoriteMovieContract.MovieDetail;
  * Created by rudilee on 7/24/17.
  */
 
-public class FavoriteMovieDBHelper extends SQLiteOpenHelper {
+public class FavoriteMovieDatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "favorite_movie.db";
     private static final int DATABASE_VERSION = 1;
 
-    public FavoriteMovieDBHelper(Context context) {
+    public FavoriteMovieDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
