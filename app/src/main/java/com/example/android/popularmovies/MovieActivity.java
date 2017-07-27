@@ -166,8 +166,6 @@ public class MovieActivity extends AppCompatActivity {
             return;
         }
 
-        FavoriteMovieDatabaseHelper dbHelper = new FavoriteMovieDatabaseHelper(getApplicationContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
         String message = isChecked ? "Movie added to favorite list" : "Movie removed from favorite list";
 
         if (isChecked) {
@@ -180,24 +178,26 @@ public class MovieActivity extends AppCompatActivity {
             values.put(FavoriteMovieContract.MovieDetail.COLUMN_BACKDROP_PATH, mMovieDetail.backdropPath);
             values.put(FavoriteMovieContract.MovieDetail.COLUMN_VOTE_AVERAGE, mMovieDetail.averageVote);
 
-            db.insert(FavoriteMovieContract.MovieDetail.TABLE_NAME, null, values);
+            getContentResolver().insert(FavoriteMovieContentProvider.CONTENT_URI, values);
         } else {
             String[] whereArgs = {String.valueOf(mMovieDetail.id)};
 
-            db.delete(FavoriteMovieContract.MovieDetail.TABLE_NAME, FavoriteMovieContract.MovieDetail.COLUMN_ID + " = ?", whereArgs);
+            getContentResolver().delete(FavoriteMovieContentProvider.CONTENT_URI, FavoriteMovieContract.MovieDetail.COLUMN_ID + " = ?", whereArgs);
         }
 
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     private boolean checkIfMovieIsFavorited() {
-        FavoriteMovieDatabaseHelper dbHelper = new FavoriteMovieDatabaseHelper(getApplicationContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        boolean movieFavorited = false;
         String[] selectionArgs = {String.valueOf(mMovieDetail.id)};
-        Cursor cursor = db.query(FavoriteMovieContract.MovieDetail.TABLE_NAME, null, FavoriteMovieContract.MovieDetail.COLUMN_ID + " = ?", selectionArgs, null, null, null);
-        boolean movieFavorited = cursor.getCount() > 0;
 
-        cursor.close();
+        Cursor cursor = getContentResolver().query(FavoriteMovieContentProvider.CONTENT_URI, null, FavoriteMovieContract.MovieDetail.COLUMN_ID + " = ?", selectionArgs, null, null);
+        if (cursor != null) {
+            movieFavorited = cursor.getCount() > 0;
+
+            cursor.close();
+        }
 
         return movieFavorited;
     }

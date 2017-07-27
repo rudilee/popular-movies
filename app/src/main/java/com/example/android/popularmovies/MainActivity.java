@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -159,26 +160,26 @@ public class MainActivity extends AppCompatActivity implements MovieThumbnailAda
         }
 
         private List<MovieDetail> loadFavoriteMovies() {
-            FavoriteMovieDatabaseHelper dbHelper = new FavoriteMovieDatabaseHelper(getApplicationContext());
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-            Cursor cursor = db.query(FavoriteMovieContract.MovieDetail.TABLE_NAME, null, null, null, null, null, FavoriteMovieContract.MovieDetail.COLUMN_ID);
+            Cursor cursor = getContentResolver().query(FavoriteMovieContentProvider.CONTENT_URI, null, null, null, null);
 
-            while (cursor.moveToNext()) {
-                MovieDetail movieDetail = new MovieDetail();
-                movieDetail.posterPath = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_POSTER_PATH));
-                movieDetail.overview = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_OVERVIEW));
-                movieDetail.releaseDate = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_RELEASE_DATE));
-                movieDetail.id = cursor.getInt(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_ID));
-                movieDetail.title = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_TITLE));
-                movieDetail.backdropPath = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_BACKDROP_PATH));
-                movieDetail.averageVote = cursor.getFloat(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_VOTE_AVERAGE));
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    MovieDetail movieDetail = new MovieDetail();
+                    movieDetail.posterPath = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_POSTER_PATH));
+                    movieDetail.overview = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_OVERVIEW));
+                    movieDetail.releaseDate = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_RELEASE_DATE));
+                    movieDetail.id = cursor.getInt(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_ID));
+                    movieDetail.title = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_TITLE));
+                    movieDetail.backdropPath = cursor.getString(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_BACKDROP_PATH));
+                    movieDetail.averageVote = cursor.getFloat(cursor.getColumnIndex(FavoriteMovieContract.MovieDetail.COLUMN_VOTE_AVERAGE));
 
-                mMovieDetails.add(movieDetail);
+                    mMovieDetails.add(movieDetail);
+                }
+
+                cursor.close();
+
+                mRetrieveSuccess = true;
             }
-
-            cursor.close();
-
-            mRetrieveSuccess = true;
 
             return mMovieDetails;
         }
