@@ -3,7 +3,6 @@ package com.example.android.popularmovies;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -180,9 +179,7 @@ public class MovieActivity extends AppCompatActivity {
 
             getContentResolver().insert(FavoriteMovieContentProvider.CONTENT_URI, values);
         } else {
-            String[] whereArgs = {String.valueOf(mMovieDetail.id)};
-
-            getContentResolver().delete(FavoriteMovieContentProvider.CONTENT_URI, FavoriteMovieContract.MovieDetail.COLUMN_ID + " = ?", whereArgs);
+            getContentResolver().delete(FavoriteMovieContentProvider.contentUriWithId(mMovieDetail.id), null, null);
         }
 
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -190,9 +187,8 @@ public class MovieActivity extends AppCompatActivity {
 
     private boolean checkIfMovieIsFavorited() {
         boolean movieFavorited = false;
-        String[] selectionArgs = {String.valueOf(mMovieDetail.id)};
 
-        Cursor cursor = getContentResolver().query(FavoriteMovieContentProvider.CONTENT_URI, null, FavoriteMovieContract.MovieDetail.COLUMN_ID + " = ?", selectionArgs, null, null);
+        Cursor cursor = getContentResolver().query(FavoriteMovieContentProvider.contentUriWithId(mMovieDetail.id), null, null, null, null, null);
         if (cursor != null) {
             movieFavorited = cursor.getCount() > 0;
 

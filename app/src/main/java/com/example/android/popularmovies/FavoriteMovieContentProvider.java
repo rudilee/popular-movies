@@ -16,6 +16,8 @@ import android.text.TextUtils;
 
 import com.example.android.popularmovies.FavoriteMovieContract.MovieDetail;
 
+import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -40,11 +42,22 @@ public class FavoriteMovieContentProvider extends ContentProvider {
 
     private SQLiteDatabase mDatabase;
 
+    public static Uri contentUriWithId(int id) {
+        return Uri.parse("content://" + PROVIDER_NAME + PATH + "/" + id);
+    }
+
     private void notifyChange(Uri uri) {
         Context context = getContext();
         if (context != null) {
             context.getContentResolver().notifyChange(uri, null);
         }
+    }
+
+    private String[] prependWithId(String[] arguments, String id) {
+        ArrayDeque<String> whereArgs = arguments != null ? new ArrayDeque<>(Arrays.asList(arguments)) : new ArrayDeque<String>();
+        whereArgs.addFirst(id);
+
+        return whereArgs.toArray(new String[0]);
     }
 
     @Override
@@ -67,7 +80,9 @@ public class FavoriteMovieContentProvider extends ContentProvider {
                 queryBuilder.setProjectionMap(new HashMap<String, String>());
                 break;
             case FAVORITE_MOVIES_ID:
-                queryBuilder.appendWhere(MovieDetail.COLUMN_ID + " = " + uri.getPathSegments().get(1));
+                queryBuilder.appendWhere(MovieDetail.COLUMN_ID + " = ?");
+
+                selectionArgs = prependWithId(selectionArgs, uri.getPathSegments().get(1));
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -124,9 +139,9 @@ public class FavoriteMovieContentProvider extends ContentProvider {
                 break;
             case FAVORITE_MOVIES_ID:
                 String id = uri.getPathSegments().get(1);
-                String whereClause = MovieDetail.COLUMN_ID + " = " + id + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
+                String whereClause = MovieDetail.COLUMN_ID + " = ?" + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
 
-                affectedCount = mDatabase.delete(MovieDetail.TABLE_NAME, whereClause, selectionArgs);
+                affectedCount = mDatabase.delete(MovieDetail.TABLE_NAME, whereClause, prependWithId(selectionArgs, id));
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -147,9 +162,9 @@ public class FavoriteMovieContentProvider extends ContentProvider {
                 break;
             case FAVORITE_MOVIES_ID:
                 String id = uri.getPathSegments().get(1);
-                String whereClause = MovieDetail.COLUMN_ID + " = " + id + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
+                String whereClause = MovieDetail.COLUMN_ID + " = ?" + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
 
-                affectedCount = mDatabase.update(MovieDetail.TABLE_NAME, values, whereClause, selectionArgs);
+                affectedCount = mDatabase.update(MovieDetail.TABLE_NAME, values, whereClause, prependWithId(selectionArgs, id));
                 break;
             default:
                 throw new IllegalArgumentException();
